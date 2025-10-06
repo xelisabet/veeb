@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Külastuse registreerimine</title>
+</head>
+<body>
+  <h1>Registreeri oma külastus</h1>
+
+  <form method="POST" action="/regvisit">
+    <label for="firstNameInput">Eesnimi:</label><br>
+    <input type="text" id="firstNameInput" name="firstNameInput" required><br><br>
+
+    <label for="lastNameInput">Perekonnanimi:</label><br>
+    <input type="text" id="lastNameInput" name="lastNameInput" required><br><br>
+
+    <input type="submit" value="Salvesta külastus">
+  </form>
+
+  <p><a href="/">Avalehele</a></p>
+</body>
+</html>
