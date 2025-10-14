@@ -2,7 +2,8 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const fs = require("fs");
 const path = require("path");
-const mysql = require("mysql2");
+//nüüd async jaoks kasutame mysql2 promise osa
+const mysql = require("mysql2/promise");
 const dbInfo = require("../../../vp2025config");
 
 const app = express();
@@ -12,26 +13,36 @@ app.use(express.static("public"));
 
 app.set("view engine", "ejs");
 
-
 app.use(bodyParser.urlencoded({ extended: false }));
 
 //LOON ANDMEBAASI ÜHENDUSE
-const conn = mysql.createConnection({ 
+/* const conn = mysql.createConnection({ 
   host: dbInfo.configData.host,
   user: dbInfo.configData.user,
   password: dbInfo.configData.passWord,
   database: dbInfo.configData.dataBase
-});
+}); */
+
+
+const dbConf = {
+  host: dbInfo.configData.host,
+  user: dbInfo.configData.user,
+  password: dbInfo.configData.passWord,
+  database: dbInfo.configData.dataBase
+};
+
 
 //Avaleht 
 app.get("/", (req, res) => {
   res.render("index");
 });
 
+
 //Külastuse registreerimise vorm 
 app.get("/regvisit", (req, res) => {
   res.render("regvisit");
 });
+
 
 app.post("/regvisit", (req, res) => {
   const firstName = req.body.firstNameInput;
@@ -77,51 +88,78 @@ app.get("/visitlog", (req, res) => {
   });
 });
 
+
 app.get("/eestifilm", (req, res) => {
   res.render("eestifilm");
 });
 
-app.get("/eestifilmiinimesed", (req, res) => {
+
+app.get("/eestifilmiinimesed", async (req, res)=>{
+  let conn;
   const sqlReq = "SELECT * FROM person";
-  conn.execute(sqlReq, (err, sqlRes)=>{
-    if(err){
-      console.log(err);
-      res.render("eestifilmiinimesed", {personList: []});
-}
-    else {
-      console.log(sqlRes);
-      res.render("eestifilmiinimesed", {personList: sqlRes});
-}
-}
-)});
+  try {
+    conn = await mysql.createConnection(dbConf);
+    console.log("Andmebaasiühendus loodud");
+    const [rows, fields] = await conn.execute(sqlReq);
+    res.render("eestifilmiinimesed", {personList: rows});
+  }
+  catch(err) {
+    console.log("Viga: " + err);
+    res.render("eestifilmiinimesed", {personList: []});
+  }
+  finally {
+    if(conn) {
+      await conn.end();
+      console.log("Andmebaasi ühendus suletud");
+    }
+  }
+});
+
 
 app.get("/eestifilmiinimesed_add", (req, res)=>{
   res.render("eestifilmiinimesed_add", {notice: "Ootan siestust!"});
 });
 
-app.post("/eestifilmiinimesed_add", (req, res)=>{
-  console.log(req.body);
-  //kas andmed on olemas
-  if(!req.body.firstNameInput || !req.body.lastNameInput || !req.body.bornInput > new Date()){
-    res.render("eestifilmiinimesed_add", {notice: "Andmed on vigased! Vaata üle!"});
+app.post("/eestifilmiinimesed_add", async (req, res) => {
+  let conn;
+  const sqlReq = "INSERT INTO person (first_name, last_name, born, deceased) VALUES (?,?,?,?)";
+
+  // kas andmed on olemas
+  if (!req.body.firstNameInput || !req.body.lastNameInput || req.body.bornInput > new Date()) {
+    res.render("eestifilmiinimesed_add", { notice: "Andmed on vigased! Vaata üle!" });
+    return;
   }
-  else {
+
+  try {
+    conn = await mysql.createConnection(dbConf);
+    console.log("Andmebaasiühendus loodud");
+
     let deceasedDate = null;
-    if(req.body.deceasedInput != ""){
+    if (req.body.deceasedInput !== "") {
       deceasedDate = req.body.deceasedInput;
     }
-    let sqlReq = "INSERT INTO person (first_name, last_name, born, deceased) VALUES (?,?,?,?)";
-    conn.execute(sqlReq, [req.body.firstNameInput, req.body.lastNameInput, req.body.bornInput, deceasedDate], (err, sqlRes)=>{
-      if(err){
-        res.render("eestifilmiinimesed_add", {notice: "Tekkis tehniline viga!" + err});
-      }
-      else {
-        res.render("eestifilmiinimesed_add", {notice: "Andmed on salvestatud!"});
-      }
-    })
+
+    const [result] = await conn.execute(sqlReq, [
+      req.body.firstNameInput,
+      req.body.lastNameInput,
+      req.body.bornInput,
+      deceasedDate
+    ]);
+
+    console.log("Salvestati kirje id: " + result.insertId);
+    res.render("eestifilmiinimesed_add", { notice: "Andmed on salvestatud!" });
+  } catch (err) {
+    console.log("Viga: " + err);
+    res.render("eestifilmiinimesed_add", { notice: "Tekkis tehniline viga! " + err });
+  } finally {
+    if (conn) {
+      await conn.end();
+      console.log("Andmebaasi ühendus suletud");
+    }
   }
-  //res.render("eestifilmiinimesed_add", {notice: "Andmed olemas!" + req.body});
 });
+
+
 
 
 app.get("/positions", (req, res) => {
