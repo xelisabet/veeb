@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+<meta charset="utf-8">
+<title>Eesti filmi ametid</title>
+</head>
+<body>
+  <h1>Eesti filmi ametid</h1>
+  <ul>
+    <% if (positions.length > 0) { %>
+      <% positions.forEach(pos => { %>
+        <li><strong><%= pos.position_name %></strong> – <%= pos.description %></li>
+      <% }) %>
+    <% } else { %>
+      <li>Ühtegi ametit veel pole lisatud.</li>
+    <% } %>
+  </ul>
+
+  <p><a href="/position_add">Lisa uus amet</a></p>
+  <p><a href="/">Avaleht</a></p>
+</body>
+</html>

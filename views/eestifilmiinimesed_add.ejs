@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+<meta charset="utf-8"
+<title>Elisabet Peterson, veebiprogrammeerimine</title>
+</head>
+<body>
+  <img src="/vp_banner_2025_ID.jpg" alt="kursuse bänner">
+	<h1>Elisabet Peterson, veebiprogrammeerimine</h1>
+	<p> See leht on tehtud <a href="https://www.tlu.ee/dt">Tallinna Ülikooli</a> veebiprogrammerimise kursusel ja ei sisalda mõistlikku sisu. </p>
+	<hr>
+  <h2>Külasta veel</h2>
+  <ul> 
+  <li><a href="/eestifilm">Eesti film</a></li>
+  <li><a href="/eestifilmiinimesed">Eesti filmi inimesed</a></li>
+  <li><a href="/regvisit">Registreeri oma külastus</a></li>
+  <li><a href="/">Avaleht</a></li>
+</ul>
+
+ <h2>Eesti filidega seotud inimeste lisamine</h2>
+ <form method="POST">
+  <label for="firstNameInput">Filmitegelase eesnimi</label>
+  <input id="firstNameInput" name="firstNameInput" type="text"placeholder="Eesnimi..." required>
+  <br>
+  <label for="lasttNameInput">Filmitegelase perekonnanimi</label>
+  <input id="lastNameInput" name="lastNameInput" type="text"placeholder="Perekonnanimi..." required>
+  <br>
+  <label for="bornInput">Sünniaeg</label>
+  <input id="bornInput" name="bornInput" type="date" required>
+ <br>
+  <label for="deceasedInput">Surmaaeg</label>
+  <input id="deceasedInput" name="deceasedInput" type="date">
+  <br>
+  <input id="personSubmit" name="personSubmit" type="submit" value="Salvesta">
+</form>
+<p><%= notice%></p>
+
+  </ul>
+</body>
+</html>
