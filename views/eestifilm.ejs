@@ -9,14 +9,24 @@
 	<h1>Elisabet Peterson, veebiprogrammeerimine</h1>
 	<p> See leht on tehtud <a href="https://www.tlu.ee/dt">Tallinna Ülikooli</a> veebiprogrammerimise kursusel ja ei sisalda mõistlikku sisu. </p>
 	<hr>
+  <ul>
+    <li><a href="/">Avalehele</a></li>
+  </ul>
   <h2>Külasta veel</h2>
   <ul> 
-  <li><a href="/eestifilmiinimesed">Eesti filmi inimesed</a></li>
-  <li><a href="/eestifilmiinimesed_add">Lisa Eesti filmi inimesi</a></li>
-  <li><a href="/">Avaleht</a></li>
-  <li><a href="/regvisit">Registreeri oma külastus</a></li>
+  <li><a href="/eestifilm/film_add">Lisa Eesti filme</a></li>
+  <li><a href="/eestifilm/inimesed">Eesti filmi inimesed</a></li>
+  <li><a href="/eestifilm/inimesed_add">Lisa Eesti filmi inimesi</a></li>
+  <li><a href="/eestifilm/positions">Ametid</a></li>
+  <li><a href="/eestifilm/position_add">Lisa amet</a></li>
+  <li><a href="/eestifilm/seosed">Seosed</a></li>
+  <li><a href="/eestifilm/seosed_add">Lisa seos</a></li>
 </ul>
 
   <h1>Eesti filmid</h1>
+<ul><% movie.forEach(function(listItem){ %>
+	<li><%= listItem.title %> <%= listItem.production_ye %> <%= listItem.duration %> <%= listItem.description %></li>
+	<% }); %>
+  </ul>
 </body>
 </html>

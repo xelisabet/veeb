@@ -3,8 +3,8 @@ const bodyParser = require("body-parser");
 const fs = require("fs");
 const path = require("path");
 //nüüd async jaoks kasutame mysql2 promise osa
-const mysql = require("mysql2/promise");
-const dbInfo = require("../../../vp2025config");
+//const mysql = require("mysql2/promise");
+//const dbInfo = require("../../../vp2025config");
 
 const app = express();
 const PORT = 5223;
@@ -24,12 +24,12 @@ app.use(bodyParser.urlencoded({ extended: false }));
 }); */
 
 
-const dbConf = {
+/* const dbConf = {
   host: dbInfo.configData.host,
   user: dbInfo.configData.user,
   password: dbInfo.configData.passWord,
   database: dbInfo.configData.dataBase
-};
+}; */
 
 
 //Avaleht 
@@ -88,130 +88,9 @@ app.get("/visitlog", (req, res) => {
   });
 });
 
-
-app.get("/eestifilm", (req, res) => {
-  res.render("eestifilm");
-});
-
-
-app.get("/eestifilmiinimesed", async (req, res)=>{
-  let conn;
-  const sqlReq = "SELECT * FROM person";
-  try {
-    conn = await mysql.createConnection(dbConf);
-    console.log("Andmebaasiühendus loodud");
-    const [rows, fields] = await conn.execute(sqlReq);
-    res.render("eestifilmiinimesed", {personList: rows});
-  }
-  catch(err) {
-    console.log("Viga: " + err);
-    res.render("eestifilmiinimesed", {personList: []});
-  }
-  finally {
-    if(conn) {
-      await conn.end();
-      console.log("Andmebaasi ühendus suletud");
-    }
-  }
-});
-
-
-app.get("/eestifilmiinimesed_add", (req, res)=>{
-  res.render("eestifilmiinimesed_add", {notice: "Ootan siestust!"});
-});
-
-app.post("/eestifilmiinimesed_add", async (req, res) => {
-  let conn;
-  const sqlReq = "INSERT INTO person (first_name, last_name, born, deceased) VALUES (?,?,?,?)";
-
-  // kas andmed on olemas
-  if (!req.body.firstNameInput || !req.body.lastNameInput || req.body.bornInput > new Date()) {
-    res.render("eestifilmiinimesed_add", { notice: "Andmed on vigased! Vaata üle!" });
-    return;
-  }
-
-  try {
-    conn = await mysql.createConnection(dbConf);
-    console.log("Andmebaasiühendus loodud");
-
-    let deceasedDate = null;
-    if (req.body.deceasedInput !== "") {
-      deceasedDate = req.body.deceasedInput;
-    }
-
-    const [result] = await conn.execute(sqlReq, [
-      req.body.firstNameInput,
-      req.body.lastNameInput,
-      req.body.bornInput,
-      deceasedDate
-    ]);
-
-    console.log("Salvestati kirje id: " + result.insertId);
-    res.render("eestifilmiinimesed_add", { notice: "Andmed on salvestatud!" });
-  } catch (err) {
-    console.log("Viga: " + err);
-    res.render("eestifilmiinimesed_add", { notice: "Tekkis tehniline viga! " + err });
-  } finally {
-    if (conn) {
-      await conn.end();
-      console.log("Andmebaasi ühendus suletud");
-    }
-  }
-});
-
-
-
-
-app.get("/positions", (req, res) => {
-  const sqlReq = "SELECT * FROM position";
-  conn.execute(sqlReq, (err, sqlRes) => {
-    if (err) {
-      console.error("Viga andmebaasi lugemisel:", err);
-      res.render("positions", { positions: [] });
-    } else {
-      res.render("positions", { positions: sqlRes });
-    }
-  });
-});
-
-
-app.get("/position_add", (req, res) => {
-  res.render("position_add", { notice: "" });
-});
-
-
-app.post("/position_add", (req, res) => {
-  const name = req.body.positionNameInput;
-  const description = req.body.positionDescriptionInput;
-
-  if (!name || !description) {
-    return res.render("position_add", { notice: "Täida kõik väljad!" });
-  }
-
-  const sqlReq = "INSERT INTO position (position_name, description) VALUES (?, ?)";
-  conn.execute(sqlReq, [name, description], (err) => {
-    if (err) {
-      console.error("Viga salvestamisel:", err);
-      res.render("position_add", { notice: "Viga salvestamisel!" });
-    } else {
-      
-      res.redirect("/eestifilm/ametid");
-    }
-  });
-});
-
-app.get("/positions", (req, res) => {
-  const sqlReq = "SELECT * FROM position";
-  conn.execute(sqlReq, (err, sqlRes) => {
-    if (err) {
-      console.log(err);
-      res.render("positions", { positions: [] });
-    } else {
-      res.render("positions", { positions: sqlRes });
-    }
-  });
-});
-
+//eesti filmi marsruudid
+const eestifilmRouter = require("./routes/eestifilmRoutes");
+app.use("/eestifilm", eestifilmRouter);
 
 app.listen(PORT, () => {
   console.log(`Server töötab pordil ${PORT}`);

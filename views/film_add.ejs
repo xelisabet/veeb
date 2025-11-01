@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+<meta charset="utf-8">
+<title>Lisa Eesti film</title>
+</head>
+<body>
+  <h1>Lisa uus Eesti film</h1>
+
+  <form method="POST" action="/film_add">
+    <label for="titleInput">Filmi nimetus:</label><br>
+    <input id="titleInput" name="titleInput" type="text" placeholder="Näiteks: Viimne reliikvia" required><br><br>
+
+    <label for="production_yeInput">Filmi aasta:</label><br>
+    <input id="production_yeInput" name="production_yeInput" type="text" placeholder="Näiteks: 2002" required><br><br>
+
+    <label for="durationInput">Filmi kestvus:</label><br>
+    <input id="durationInput" name="durationInput" type="text" placeholder="Näiteks: 86(min)" required><br><br>
+
+    <label for="descriptionInput">Kirjeldus:</label><br>
+    <textarea id="descriptionInput" name="descriptionInput" cols="80" rows="5" placeholder="Filmi lühikirjeldus..." required></textarea><br><br>
+
+    <input type="submit" value="Salvesta film">
+  </form>
+
+  <p style="color:darkred;"><%= notice %></p>
+
+  <p><a href="/eestifilm">Tagasi filmides nimekirja</a></p>
+  <p><a href="/">Avaleht</a></p>
+</body>
+</html>
