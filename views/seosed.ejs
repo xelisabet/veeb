@@ -5,13 +5,28 @@
 <title>Eesti filmi seosed</title>
 </head>
 <body>
-  <h1>Eesti filmi seosed</h1>
-<ul><% person_in_movie.forEach(function(listItem){ %>
-	<li><%= listItem.position_id %> <%= listItem.role %> <%= listItem.person_id %> <%= listItem.movie_id %></li>
-	<% }); %>
-  </ul>
+  <h1>Inimeste, filmide ja ametite seosed</h1>
 
-  <p><a href="/seosed_add">Lisa uus seos</a></p>
-  <p><a href="/">Avaleht</a></p>
+<table border="1" cellpadding="6">
+  <tr>
+    <th>Isik</th>
+    <th>Film</th>
+    <th>Amet</th>
+    <th>Roll</th>
+  </tr>
+
+  <% relationsList.forEach(r => { %>
+    <tr>
+      <td><%= r.first_name %> <%= r.last_name %></td>
+      <td><%= r.movie_title %></td>
+      <td><%= r.position_name %></td>
+      <td><%= r.role || "-" %></td>
+    </tr>
+  <% }) %>
+
+</table>
+
+<p><a href="/eestifilm/seosed_add">Lisa uus seos</a></p>
+
 </body>
 </html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+<meta charset="utf-8">
+<title>Lisa seos</title>
+</head>
+<body>
+<h1>Lisa uus seos</h1>
+
+<p><%= notice %></p>
+
+<form action="/eestifilm/seosed_add" method="POST">
+
+  <!-- Isik -->
+  <label>Isik:</label>
+  <select name="personSelect" required>
+    <option selected disabled>Vali isik</option>
+    <% persons.forEach(p => { %>
+      <option value="<%= p.id %>"><%= p.first_name %> <%= p.last_name %></option>
+    <% }) %>
+  </select>
+  <br><br>
+
+  <!-- Film -->
+  <label>Film:</label>
+  <select name="movieSelect" required>
+    <option selected disabled>Vali film</option>
+    <% movies.forEach(m => { %>
+      <option value="<%= m.id %>"><%= m.title %></option>
+    <% }) %>
+  </select>
+  <br><br>
+
+  <!-- Amet -->
+  <label>Amet:</label>
+  <select name="positionSelect" required>
+    <option selected disabled>Vali amet</option>
+    <% positions.forEach(pos => { %>
+      <option value="<%= pos.id %>"><%= pos.position_name %></option>
+    <% }) %>
+  </select>
+  <br><br>
+
+  <!-- Roll (ainult näitlejatel) -->
+  <label>Roll (valikuline):</label>
+  <input type="text" name="roleInput" placeholder="nt: Peategelane" />
+  <br><br>
+
+  <button type="submit">Salvesta seos</button>
+
+</form>
+</body>

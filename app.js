@@ -38,55 +38,9 @@ app.get("/", (req, res) => {
 });
 
 
-//Külastuse registreerimise vorm 
-app.get("/regvisit", (req, res) => {
-  res.render("regvisit");
-});
-
-
-app.post("/regvisit", (req, res) => {
-  const firstName = req.body.firstNameInput;
-  const lastName = req.body.lastNameInput;
-
-
-  const now = new Date();
-  const dateStr = now.toLocaleDateString("et-EE", {
-    day: "numeric",
-    month: "long",
-    year: "numeric"
-  });
-  const timeStr = now.toLocaleTimeString("et-EE", { hour: "2-digit", minute: "2-digit" });
-
-  const logLine = `${firstName} ${lastName}, ${dateStr} kell ${timeStr}\n`;
-
-  const filePath = path.join(__dirname, "public", "txt", "visitlog.txt");
-
-
-  fs.appendFile(filePath, logLine, (err) => {
-    if (err) {
-      console.error("Faili kirjutamisel viga:", err);
-      return res.status(500).send("Viga faili kirjutamisel");
-    }
-
-
-    res.render("visitregistered", { firstName: firstName, lastName: lastName });
-  });
-});
-
-
-app.get("/visitlog", (req, res) => {
-  const filePath = path.join(__dirname, "public", "txt", "visitlog.txt");
-
-  fs.readFile(filePath, "utf8", (err, data) => {
-    if (err) {
-      console.error("Logifaili lugemisel viga:", err);
-      return res.render("visitlog", { visits: [] });
-    }
-
-    const visits = data.split("\n").filter(line => line.trim() !== "");
-    res.render("visitlog", { visits: visits });
-  });
-});
+//regamise marsruut
+const visitRouter = require("./routes/visitRoutes");
+app.use("/", visitRouter);
 
 //eesti filmi marsruudid
 const eestifilmRouter = require("./routes/eestifilmRoutes");

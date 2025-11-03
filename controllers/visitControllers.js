@@ -1,95 +1,61 @@
-const mysql = require("mysql2/promise");
-const dbInfo = require("../../../../vp2025config");
+const fs = require("fs").promises;
+const path = require("path");
 
-const dbConf = {
-  host: dbInfo.configData.host,
-  user: dbInfo.configData.user,
-  password: dbInfo.configData.passWord,
-  database: dbInfo.configData.dataBase
-};
-
-
-//@desc Home page for Estonian film section
-//@royte GET /visitlog
+//@desc registring a visit
+//@royte GET /regvisit
 //@access public
-const visitLog = async (req, res)=>{
-  let conn;
-  const filePath = path.join(__dirname, "public", "txt", "visitlog.txt");
-  try {
-    conn = await mysql.createConnection(dbConf);
-    console.log("Andmebaasiühendus loodud");
-    const [rows, fields] = await conn.execute(sqlReq);
-    res.render("eestifilm", {movie: rows});
-  }
-  catch(err) {
-    console.error("Logifaili lugemisel viga:", err);
-    return res.render("visitlog", { visits: [] });
-  }
-  finally {
-    if(conn) {
-      await conn.end();
-      console.log("Andmebaasi ühendus suletud");
-    }
-  }
+const visitAdd = (req, res) => {
+  res.render("regvisit");
 };
-app.get("/visitlog", (req, res) => {
-  const filePath = path.join(__dirname, "public", "txt", "visitlog.txt");
 
-  fs.readFile(filePath, "utf8", (err, data) => {
-    if (err) {
-      console.error("Logifaili lugemisel viga:", err);
-      return res.render("visitlog", { visits: [] });
-    }
+//@desc saving a visit
+//@royte POST /regvisit
+//@access public
+const visitAddPost = async (req, res)=>{
+  const firstName = req.body.firstNameInput;
+  const lastName  = req.body.lastNameInput;
 
-    const visits = data.split("\n").filter(line => line.trim() !== "");
-    res.render("visitlog", { visits: visits });
+  const now = new Date();
+  const dateStr = now.toLocaleDateString("et-EE", {
+    day: "numeric",
+    month: "long",
+    year: "numeric"
   });
-});
+  const timeStr = now.toLocaleTimeString("et-EE", {
+    hour: "2-digit",
+    minute: "2-digit"
+  });
 
-//@desc page for adding people involved in Estonian film industry
-//@royte GET /eestifilm/film_add
-//@access public
-const filmAdd = (req, res)=>{
-  res.render("film_add", {notice: "Ootan siestust!"});
-};
-
-
-//@desc page for adding people involved in Estonian film industry
-//@royte POST /eestifilm/film_add
-//@access public
-const filmAddPost = async (req, res) => {
-  let conn;
-  const sqlReq = "INSERT INTO movie (title, production_ye, duration, description) VALUES (?,?,?,?)";
-
-  // kas andmed on olemas
-  if (!req.body.titleInput || !req.body.production_yeInput || req.body.durationInput || req.body.descriptionInput) {
-    res.render("film_add", { notice: "Andmed on vigased! Vaata üle!" });
-    return;
-  }
+  const logLine = `${firstName} ${lastName}, ${dateStr} kell ${timeStr}\n`;
+  const filePath = path.join(__dirname, "..", "public", "txt", "visitlog.txt");
 
   try {
-    conn = await mysql.createConnection(dbConf);
-    console.log("Andmebaasiühendus loodud");
-
-    const [result] = await conn.execute(sqlReq, [
-      req.body.titleInput,
-      req.body.production_yeInput,
-      req.body.durationInput,
-      req.body.descriptionInput
-    ]);
-
-    console.log("Salvestati kirje id: " + result.insertId);
-    res.render("film_add", { notice: "Andmed on salvestatud!" });
+    await fs.appendFile(filePath, logLine);
+    //redirect logile
+    res.redirect("/visitlog");
   } catch (err) {
-    console.log("Viga: " + err);
-    res.render("film_add", { notice: "Tekkis tehniline viga! " + err });
-  } finally {
-    if (conn) {
-      await conn.end();
-      console.log("Andmebaasi ühendus suletud");
-    }
+    console.error("Faili kirjutamise viga:", err);
+    res.status(500).send("Külastuse registreerimine ebaõnnestus");
   }
 };
+
+//@desc log of visits
+//@royte Get /visitlog
+//@access public
+const visitLog = async (req, res) => {
+  const filePath = path.join(__dirname, "..", "public", "txt", "visitlog.txt");
+
+  try {
+    const data = await fs.readFile(filePath, "utf8");
+    const visits = data.split("\n").filter(line => line.trim() !== "");
+    res.render("visitlog", { visits });
+  } catch (err) {
+    console.error("Logi lugemise viga:", err);
+    res.render("visitlog", { visits: [] });
+  }
+};
+
+
 module.exports = {
     visitLog,
     visitAdd,
