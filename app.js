@@ -12,7 +12,7 @@ const PORT = 5223;
 app.use(express.static("public"));
 
 app.set("view engine", "ejs");
-
+//kui vormist tuleb ainult text siis false, muidu true
 app.use(bodyParser.urlencoded({ extended: false }));
 
 //LOON ANDMEBAASI ÜHENDUSE
@@ -45,6 +45,10 @@ app.use("/", visitRouter);
 //eesti filmi marsruudid
 const eestifilmRouter = require("./routes/eestifilmRoutes");
 app.use("/eestifilm", eestifilmRouter);
+
+//galeriipiltide üleslaadimise marsruudid
+const galleryphotoupRouter = require("./routes/galleryphotoupRoutes");
+app.use("/galleryphotoupload", galleryphotoupRouter);
 
 app.listen(PORT, () => {
   console.log(`Server töötab pordil ${PORT}`);
