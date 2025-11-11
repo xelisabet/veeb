@@ -32,11 +32,14 @@ app.use(bodyParser.urlencoded({ extended: false }));
 }; */
 
 
-//Avaleht 
+/* //Avaleht 
 app.get("/", (req, res) => {
   res.render("index");
-});
+}); */
 
+//avalehe marsruut
+const homeRouter = require("./routes/homeRoutes");
+app.use("/", homeRouter);
 
 //regamise marsruut
 const visitRouter = require("./routes/visitRoutes");
@@ -49,6 +52,10 @@ app.use("/eestifilm", eestifilmRouter);
 //galeriipiltide üleslaadimise marsruudid
 const galleryphotoupRouter = require("./routes/galleryphotoupRoutes");
 app.use("/galleryphotoupload", galleryphotoupRouter);
+
+//galerii marsruudid
+const photogalleryRouter = require("./routes/photogalleryRoutes");
+app.use("/photogallery", photogalleryRouter);
 
 app.listen(PORT, () => {
   console.log(`Server töötab pordil ${PORT}`);

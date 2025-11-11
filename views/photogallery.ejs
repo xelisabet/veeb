@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Fotogalerii</title>
+  <link rel="stylesheet" href="/style/gallery.css">
+  <script src="/script/gallery.js" defer></script>
+</head>
+<body>
+  <img src="/vp_banner_2025_ID.jpg" alt="kursuse bänner">
+	<h1>Elisabet Peterson, veebiprogrammeerimine</h1>
+	<p> See leht on tehtud <a href="https://www.tlu.ee/dt">Tallinna Ülikooli</a> veebiprogrammerimise kursusel ja ei sisalda mõistlikku sisu. </p>
+	<hr>
+  <p><a href="/">Avalehele</a></p>
+  <hr>
+  <!-- Dialoogiaken normaalmõõdus fotode näitamiseks -->
+   <dialog id="modal" class="modalarea">
+    <span id="modalClose" class="modalclose">&times;</span>
+    <div class="modalhorizontal">
+      <div class="modalvertical">
+        <p id="modalCaption"></p>
+        <img id="modalImage" src="/images/empty.png" alt="Galeriipilt">
+      </div>
+    </div>
+   </dialog>
+  <h2>Fotogalerii</h2>
+  <div id="gallery" class="gallery">
+  <% galleryData.forEach(function(image) {%>
+  <img src="<%=imagehref%><%=image.src%>" alt="<%=image.alt%>" class="thumbs" data-filename="<%=image.src%>">
+  <% }); %>
+  </div>
+</body>
+</html>

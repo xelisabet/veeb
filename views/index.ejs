@@ -14,8 +14,14 @@
   <ul> <li><a href="/regvisit">Registreeri oma külastus</a></li>
   <li><a href="/eestifilm">Eesti film</a></li>
   <li><a href="/galleryphotoupload">Lae fotosi galeriisse</a></li>
-
+  <li><a href="/photogallery">Fotogalerii</a></li>
 </ul>
-  
+<% if (lastPhoto) { %>
+  <hr>
+  <h2>Viimane avalik foto</h2>
+  <img src="/gallery/normal/<%= lastPhoto.filename %>" 
+       alt="<%= lastPhoto.alttext %>" 
+       style="max-width:300px;">
+<% } %>
 </body>
 </html>
