@@ -11,10 +11,13 @@
 	<hr>
   
   <h2>Siit leiab</h2>
-  <ul> <li><a href="/regvisit">Registreeri oma külastus</a></li>
+  <ul> 
+  <li><a href="/signup">Loo kasutajakonto</a></li>
+  <li><a href="/regvisit">Registreeri oma külastus</a></li>
   <li><a href="/eestifilm">Eesti film</a></li>
   <li><a href="/galleryphotoupload">Lae fotosi galeriisse</a></li>
   <li><a href="/photogallery">Fotogalerii</a></li>
+  <li><a href="news">Uudised</a></li>
 </ul>
 <% if (lastPhoto) { %>
   <hr>
@@ -22,6 +25,20 @@
   <img src="/gallery/normal/<%= lastPhoto.filename %>" 
        alt="<%= lastPhoto.alttext %>" 
        style="max-width:300px;">
+<% } %>
+<% if (latestNews) { %>
+  <hr>
+  <h2>Viimane uudis</h2>
+  <h3><%= latestNews.title %></h3>
+  <p><%= latestNews.content %></p>
+
+  <% if (latestNews.photofilename) { %>
+    <img src="/news_images/<%= latestNews.photofilename %>" 
+         alt="<%= latestNews.alttext %>" 
+         style="max-width:300px;">
+  <% } %>
+
+  <small>Aegub: <%= latestNews.expire %></small>
 <% } %>
 </body>
 </html>

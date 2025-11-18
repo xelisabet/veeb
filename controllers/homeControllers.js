@@ -17,6 +17,7 @@ const dbConf = {
 const homePage = async (req, res) => {
   let conn;
   let lastPhoto = null;
+  let latestNews = null;
   try{
     conn = await mysql.createConnection(dbConf);
     const sqlReq = `
@@ -26,6 +27,15 @@ const homePage = async (req, res) => {
     if (rows.length > 0) {
       lastPhoto = rows[0];
     }
+     const sqlNews = `
+      SELECT title, content, photofilename, alttext, expire 
+      FROM news 
+      WHERE expire > ? 
+      ORDER BY id DESC 
+      LIMIT 1
+    `;
+    const [newsRows] = await conn.execute(sqlNews, [new Date()]);
+    if (newsRows.length > 0) latestNews = newsRows[0];
   }catch(err) {
     console.log("Viga foto päringus: ", err);
   }
@@ -35,7 +45,7 @@ const homePage = async (req, res) => {
       console.log("Andmebaasi ühendus suletud");
     }
   } 
-  res.render("index", { lastPhoto });
+  res.render("index", { lastPhoto, latestNews });
 };
  
 

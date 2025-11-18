@@ -57,6 +57,14 @@ app.use("/galleryphotoupload", galleryphotoupRouter);
 const photogalleryRouter = require("./routes/photogalleryRoutes");
 app.use("/photogallery", photogalleryRouter);
 
+//uudiste marsruut
+const newsRouter = require("./routes/newsRoutes");
+app.use("/news", newsRouter);
+
+//konto loomise marsruut
+const signupRouter = require("./routes/signupRoutes");
+app.use("/signup", signupRouter);
+
 app.listen(PORT, () => {
   console.log(`Server töötab pordil ${PORT}`);
 });
