@@ -1,13 +1,15 @@
 const mysql = require("mysql2/promise");
 const argon2 = require("argon2");
-const dbInfo = require("../../../../vp2025config");
+const pool = require("../dbPool");
+/* const dbInfo = require("../../../../vp2025config"); */
 
-const dbConf = {
+
+/* const dbConf = {
   host: dbInfo.configData.host,
   user: dbInfo.configData.user,
   password: dbInfo.configData.passWord,
   database: dbInfo.configData.dataBase
-};
+}; */
 
 
 //@desc Home page for signing in
@@ -34,9 +36,10 @@ const signinPagePost = async (req, res) => {
     return res.render("signin", {notice: notice})
   }
   try{
-    conn = await mysql.createConnection(dbConf);
+    //conn = await mysql.createConnection(dbConf);
     let sqlReq = "SELECT id, password, first_name, last_name FROM usersid WHERE email = ?";
-    const [users] = await conn.execute(sqlReq, [req.body.emailInput]);
+    //const [users] = await conn.execute(sqlReq, [req.body.emailInput]);
+    const [users] = await pool.execute(sqlReq, [req.body.emailInput]);
     //kas selleine kasutaja leiti
     if (users.length === 0) {
       let notice = "Kasutajanimi ja /või parool on vale!";
@@ -66,10 +69,10 @@ const signinPagePost = async (req, res) => {
     res.render("signin", {notice: "Tehniline viga"});
   }
   finally {
-    if (conn) {
+    /* if (conn) {
       await conn.end();
       console.log("Andmebaasi ühendus suletud");
-    }
+    } */
   } 
 };
 

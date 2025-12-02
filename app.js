@@ -1,4 +1,5 @@
 const express = require("express");
+require("dotenv").config();
 const bodyParser = require("body-parser");
 const fs = require("fs");
 const path = require("path");
@@ -12,7 +13,7 @@ const {isLogin} = require("../../src/checkLogin");
 const app = express();
 const PORT = 5223;
 
-app.use(session({secret: dbInfo.configData.sessionSecret, saveUninitialized: true, resave: true}));
+app.use(session({secret: process.env.SES_SECRET, saveUninitialized: false, resave: false}));
 
 app.use(express.static("public"));
 
@@ -20,7 +21,8 @@ app.set("view engine", "ejs");
 //kui vormist tuleb ainult text siis false, muidu true
 app.use(bodyParser.urlencoded({ extended: false }));
 
-
+console.log(process.env.DB_HOST);
+console.log("SES_SECRET is:", process.env.SES_SECRET);
 
 //sisseloginud kasutajate avaleht
 app.get("/home", loginCheck.isLogin, (req,res)=>{
